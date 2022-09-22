@@ -1,26 +1,53 @@
-import { Title } from "../styled"
-import { Link } from "react-router-dom"
-import { LinkWord } from "../styled"
-import styled from "styled-components"
+import { Title } from "../styled";
+import { Link } from "react-router-dom";
+import { LinkWord } from "../styled";
+import styled from "styled-components";
+import { useEffect } from "react";
+import { selectSpaces } from "../store/space/selectors";
+import { fetchSpaces } from "../store/space/thunks";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-export const Homepage = () => {
+export function Homepage() {
+  const dispatch = useDispatch();
+  const spaces = useSelector(selectSpaces);
+  const navigate = useNavigate();
+
+  //   console.log("selector spaces", space);
+
+  useEffect(() => {
+    dispatch(fetchSpaces());
+  }, [dispatch]);
 
   return (
     <Container>
-     <h3>Hello there 👋</h3>
-     <p>General information:</p>
-     <ul>
-      <li>Go to your backend and modify the config url</li>
-      <li>Make sure you clicked on the <b>use template</b> button on github</li>
-      <li>This template is using <a style={LinkWord} target="_blank" href="https://styled-components.com/">styled components</a>, you don't have to use it</li>
-      <li>You don't have to follow the folder structure, feel free to adapt to your own</li>
-      <li>Login and SignUp are already implemented</li>
-      <li>Modify this page to create your own homeepage</li>
-     </ul>
+      <div className="title">
+        <h2>List of Spaces</h2>
+        <div className="space">
+          <div>
+            {!spaces.length
+              ? "Loading"
+              : spaces.map((space) => (
+                  <div
+                    key={space.id}
+                    style={{ backgroundColor: `${space.backgroundColor}` }}
+                  >
+                    <h2 style={{ color: `${space.color}` }}>{space.title}</h2>
+                    <p style={{ color: `${space.color}` }}>
+                      {space.description}
+                    </p>
+                    <Link to={`/spaces/${space.id}`}>
+                      <button>Visit Space</button>
+                    </Link>
+                  </div>
+                ))}
+          </div>
+        </div>
+      </div>
     </Container>
-  )
+  );
 }
 
 const Container = styled.div`
-  margin: 20px
-`
+  margin: 20px;
+`;
