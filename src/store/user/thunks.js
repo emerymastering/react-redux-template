@@ -1,10 +1,15 @@
 import { apiUrl } from "../../config/constants";
 import axios from "axios";
 import { selectToken } from "./selectors";
-import { appLoading, appDoneLoading, setMessage } from "../appState/slice";
+import {
+  appLoading,
+  appDoneLoading,
+  setMessage,
+  clearMessage,
+} from "../appState/slice";
 import { showMessageWithTimeout } from "../appState/thunks";
 import { loginSuccess, logOut, tokenStillValid } from "./slice";
-import { storyDeleteSuccess } from "./slice";
+import { storyDeleteSuccess, storyPostSuccess } from "./slice";
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -141,6 +146,43 @@ export const deleteStory = (storyId) => {
       console.log("Story deleted?", response.data);
       dispatch(storyDeleteSuccess(storyId));
       dispatch(appDoneLoading());
+    } catch (e) {
+      console.error(e);
+    }
+  };
+};
+
+export const postStory = (name, content, imageUrl) => {
+  return async (dispatch, getState) => {
+    const { space, token } = getState().user;
+    dispatch(appLoading());
+
+    try {
+      const response = await axios.post(
+        `${apiUrl}/spaces/${space.id}/stories/`,
+        {
+          name,
+          content,
+          imageUrl,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Story posted?", response.data);
+      dispatch(storyPostSuccess(response.data.story));
+      dispatch(
+        setMessage({
+          variant: "success",
+          dismissable: true,
+          text: "The post was created",
+        })
+      );
+      const timeout = 3000;
+      setTimeout(() => dispatch(clearMessage()), timeout);
     } catch (e) {
       console.error(e);
     }
