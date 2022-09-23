@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
 import Card from "react-bootstrap/Card";
 import StoryForm from "./StoryForm";
+import MySpaceForm from "./MySpaceForm";
 
 export function MySpace() {
   const space = useSelector(selectMySpace);
@@ -37,15 +38,25 @@ export function MySpace() {
     <div>
       <h2>Hello {profile.name}!</h2>
       <div>
+        <button onClick={() => setEditMode(!editMode)}>
+          Edit your profile
+        </button>
+
+        {editMode && (
+          <Card>
+            <MySpaceForm closer={setEditMode} />
+          </Card>
+        )}
+
         <button onClick={() => setpostStoryMode(!postStoryMode)}>
           Post a cool story bro
         </button>
 
         {postStoryMode && (
           <Card>
-            <button onClick={() => setpostStoryMode(!postStoryMode)}>
+            {/* <button onClick={() => setpostStoryMode(!postStoryMode)}>
               close
-            </button>
+            </button> */}
             <StoryForm closer={setpostStoryMode} />
           </Card>
         )}

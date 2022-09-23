@@ -9,7 +9,7 @@ import {
 } from "../appState/slice";
 import { showMessageWithTimeout } from "../appState/thunks";
 import { loginSuccess, logOut, tokenStillValid } from "./slice";
-import { storyDeleteSuccess, storyPostSuccess } from "./slice";
+import { storyDeleteSuccess, storyPostSuccess, spaceUpdated } from "./slice";
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -185,6 +185,39 @@ export const postStory = (name, content, imageUrl) => {
       setTimeout(() => dispatch(clearMessage()), timeout);
     } catch (e) {
       console.error(e);
+    }
+  };
+};
+
+export const updateMySpace = (title, description, backgroundColor, color) => {
+  return async (dispatch, getState) => {
+    try {
+      const { space, token } = getState().user;
+      dispatch(appLoading());
+
+      const response = await axios.patch(
+        `${apiUrl}/spaces/${space.id}`,
+        {
+          title,
+          description,
+          backgroundColor,
+          color,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log(response);
+
+      dispatch(
+        showMessageWithTimeout("success", false, "update successfull", 3000)
+      );
+      dispatch(spaceUpdated(response.data.space));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      console.log(e.message);
     }
   };
 };
