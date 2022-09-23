@@ -10,7 +10,7 @@ export const fetchSpaces = () => async (dispatch, getState) => {
   try {
     dispatch(startLoadingSpace());
 
-    const response = await axios.get(`${apiUrl}/`); // => Promise
+    const response = await axios.get(`${apiUrl}/spaces`); // => Promise
 
     console.log("responses", response);
 

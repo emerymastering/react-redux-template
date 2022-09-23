@@ -4,7 +4,7 @@ import { fetchOneSpace } from "../store/space/thunks";
 import { useDispatch, useSelector } from "react-redux";
 import { selectSpaces } from "../store/space/selectors";
 
-export default function Spaces() {
+export function Space() {
   const dispatch = useDispatch();
   const { id } = useParams();
 

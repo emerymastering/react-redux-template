@@ -1,17 +1,13 @@
-import { Title } from "../styled";
-import { Link } from "react-router-dom";
-import { LinkWord } from "../styled";
 import styled from "styled-components";
 import { useEffect } from "react";
 import { selectSpaces } from "../store/space/selectors";
 import { fetchSpaces } from "../store/space/thunks";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import Space from "../components/Space";
 
 export function Homepage() {
   const dispatch = useDispatch();
   const spaces = useSelector(selectSpaces);
-  const navigate = useNavigate();
 
   //   console.log("selector spaces", space);
 
@@ -27,20 +23,19 @@ export function Homepage() {
           <div>
             {!spaces.length
               ? "Loading"
-              : spaces.map((space) => (
-                  <div
-                    key={space.id}
-                    style={{ backgroundColor: `${space.backgroundColor}` }}
-                  >
-                    <h2 style={{ color: `${space.color}` }}>{space.title}</h2>
-                    <p style={{ color: `${space.color}` }}>
-                      {space.description}
-                    </p>
-                    <Link to={`/spaces/${space.id}`}>
-                      <button>Visit Space</button>
-                    </Link>
-                  </div>
-                ))}
+              : spaces.map((space) => {
+                  return (
+                    <Space
+                      key={space.id}
+                      id={space.id}
+                      title={space.title}
+                      description={space.description}
+                      backgroundColor={space.backgroundColor}
+                      color={space.color}
+                      showLink={true}
+                    />
+                  );
+                })}
           </div>
         </div>
       </div>

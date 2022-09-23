@@ -4,6 +4,7 @@ import { selectToken } from "./selectors";
 import { appLoading, appDoneLoading, setMessage } from "../appState/slice";
 import { showMessageWithTimeout } from "../appState/thunks";
 import { loginSuccess, logOut, tokenStillValid } from "./slice";
+import { storyDeleteSuccess } from "./slice";
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -55,7 +56,11 @@ export const login = (email, password) => {
       });
 
       dispatch(
-        loginSuccess({ token: response.data.token, user: response.data.user })
+        loginSuccess({
+          token: response.data.token,
+          user: response.data.user,
+          space: response.data.space,
+        })
       );
       dispatch(showMessageWithTimeout("success", false, "welcome back!", 1500));
       dispatch(appDoneLoading());
@@ -113,6 +118,31 @@ export const getUserWithStoredToken = () => {
       // get rid of the token by logging out
       dispatch(logOut());
       dispatch(appDoneLoading());
+    }
+  };
+};
+export const deleteStory = (storyId) => {
+  return async (dispatch, getState) => {
+    dispatch(appLoading());
+    const { token } = getState().user;
+
+    // make an axios request to delete
+    // and console.log the response if success
+    try {
+      const response = await axios.delete(
+        `${apiUrl}/spaces/stories/${storyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Story deleted?", response.data);
+      dispatch(storyDeleteSuccess(storyId));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      console.error(e);
     }
   };
 };
