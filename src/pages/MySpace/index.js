@@ -11,6 +11,8 @@ import Loading from "../../components/Loading";
 import Card from "react-bootstrap/Card";
 import StoryForm from "./StoryForm";
 import MySpaceForm from "./MySpaceForm";
+import Button from "react-bootstrap/Button";
+import Carousel from "better-react-carousel";
 
 export function MySpace() {
   const space = useSelector(selectMySpace);
@@ -28,7 +30,7 @@ export function MySpace() {
   if (space === null) {
     return <Loading />;
   }
-  const displayButtons = profile?.id === space.userId;
+  // const displayButtons = profile?.id === space.userId;
 
   console.log("myspace", space);
   console.log("myprofile", profile);
@@ -38,39 +40,42 @@ export function MySpace() {
     <div>
       <h2>Hello {profile.name}!</h2>
       <div>
-        <button onClick={() => setEditMode(!editMode)}>
+        <Button onClick={() => setEditMode(!editMode)}>
           Edit your profile
-        </button>
-
+        </Button>{" "}
         {editMode && (
           <Card>
             <MySpaceForm closer={setEditMode} />
           </Card>
         )}
-
-        <button onClick={() => setpostStoryMode(!postStoryMode)}>
+        <Button onClick={() => setpostStoryMode(!postStoryMode)}>
           Post a cool story bro
-        </button>
-
+        </Button>
         {postStoryMode && (
           <Card>
-            {/* <button onClick={() => setpostStoryMode(!postStoryMode)}>
+            {/* <Button onClick={() => setpostStoryMode(!postStoryMode)}>
               close
-            </button> */}
+            </Button> */}
             <StoryForm closer={setpostStoryMode} />
           </Card>
         )}
-        {space.stories &&
-          space.stories.map((story) => (
-            <div key={story.id}>
-              <h2>{story.name} </h2>
-              <p>{story.content}</p>
-              <img src={story.imageUrl} height="100px" alt="story"></img>
-              <button onClick={() => dispatch(deleteStory(story.id))}>
-                Delete Story
-              </button>
-            </div>
-          ))}
+        <div style={{ maxWidth: 300 }}>
+          <Carousel cols={1} rows={1} gap={1} showDots loop>
+            {space.stories &&
+              space.stories.map((story) => (
+                <Carousel.Item key={story.id}>
+                  <div>
+                    <h2>{story.name} </h2>
+                    <p>{story.content}</p>
+                    <img src={story.imageUrl} height="100px" alt="story"></img>
+                    <Button onClick={() => dispatch(deleteStory(story.id))}>
+                      Delete Story
+                    </Button>
+                  </div>
+                </Carousel.Item>
+              ))}
+          </Carousel>
+        </div>
       </div>
     </div>
   );
